@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router();
 const { loginService } = require("../service/adminService");
+const { formatResponse, analysisToken } = require("../utils/tool");
 
 //登录
 router.post("/login", async function (req, res, next) {
@@ -8,7 +9,23 @@ router.post("/login", async function (req, res, next) {
 
   //验证账号和密码
   const result = await loginService(req.body);
-  console.log(result);
+  if (result.token) {
+    res.setHeader("authentication", result.token);
+  }
+  res.send(formatResponse(0, "", result.data));
+});
+
+//恢复登录状态
+router.get("/whoami", async function (req, res, next) {
+  const token = req.get("Authorization");
+  const result = analysisToken(token);
+  res.send(
+    formatResponse(0, "", {
+      loginId: result.loginId,
+      name: result.name,
+      id: result.id,
+    })
+  );
 });
 
 module.exports = router;

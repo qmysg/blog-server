@@ -1,10 +1,15 @@
+const { formatResponse } = require("./tool");
+
 class ServiceError extends Error {
   constructor(message, code) {
     super(message);
     this.code = code;
   }
 
-  toResponseJSON() {}
+  //将错误转换为json格式
+  toResponseJSON() {
+    return formatResponse(this.code, this.message, null);
+  }
 }
 
 //文件上传错误

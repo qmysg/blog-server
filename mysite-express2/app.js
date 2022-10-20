@@ -3,6 +3,9 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
+var { expressjwt: jwt } = require("express-jwt");
+var md5 = require("md5");
+var { ForbiddenError } = require("./utils/error");
 
 var app = express();
 
@@ -10,6 +13,7 @@ var app = express();
 require("dotenv").config();
 //数据库链接
 require("./dao/db");
+//引入路由
 var adminRouter = require("./routes/admin");
 
 app.use(logger("dev"));
@@ -17,6 +21,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+
+//验证token接口
+app.use(
+  jwt({
+    secret: md5(process.env.JWT_SECRET),
+    algorithms: ["HS256"],
+  }).unless({
+    //不需要验证的路由
+    path: [{ url: "/api/admin/login", methods: ["POST"] }],
+  })
+);
 
 //路由
 app.use("/api/admin", adminRouter);
@@ -28,13 +43,9 @@ app.use(function (req, res, next) {
 
 //错误处理
 app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get("env") === "development" ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render("error");
+  if (err.name === "UnauthorizedError") {
+    res.send(new ForbiddenError("未登录或登录已过期").toResponseJSON());
+  }
 });
 
 module.exports = app;
