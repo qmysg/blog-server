@@ -6,6 +6,7 @@ var logger = require("morgan");
 var { expressjwt: jwt } = require("express-jwt");
 var md5 = require("md5");
 var { ForbiddenError, UnknownError, ServiceError } = require("./utils/error");
+const session = require("express-session");
 
 var app = express();
 
@@ -16,6 +17,15 @@ require("express-async-errors");
 require("./dao/db");
 //引入路由
 var adminRouter = require("./routes/admin");
+var captchaRouter = require("./routes/captcha");
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    saveUninitialized: true,
+    resave: true,
+  })
+);
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -30,12 +40,16 @@ app.use(
     algorithms: ["HS256"],
   }).unless({
     //不需要验证的路由
-    path: [{ url: "/api/admin/login", methods: ["POST"] }],
+    path: [
+      { url: "/api/admin/login", methods: ["POST"] },
+      { url: "/res/captcha", methods: ["GET"] },
+    ],
   })
 );
 
 //路由
 app.use("/api/admin", adminRouter);
+app.use("/res/captcha", captchaRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
