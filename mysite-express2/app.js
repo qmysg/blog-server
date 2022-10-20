@@ -18,6 +18,7 @@ require("./dao/db");
 //引入路由
 var adminRouter = require("./routes/admin");
 var captchaRouter = require("./routes/captcha");
+var bannerRouter = require("./routes/banner");
 
 app.use(
   session({
@@ -43,6 +44,7 @@ app.use(
     path: [
       { url: "/api/admin/login", methods: ["POST"] },
       { url: "/res/captcha", methods: ["GET"] },
+      { url: "/api/banner", methods: ["GET"] },
     ],
   })
 );
@@ -50,6 +52,7 @@ app.use(
 //路由
 app.use("/api/admin", adminRouter);
 app.use("/res/captcha", captchaRouter);
+app.use("/api/banner", bannerRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
