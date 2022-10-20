@@ -5,12 +5,13 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var { expressjwt: jwt } = require("express-jwt");
 var md5 = require("md5");
-var { ForbiddenError } = require("./utils/error");
+var { ForbiddenError, UnknownError, ServiceError } = require("./utils/error");
 
 var app = express();
 
 //引入环境变量
 require("dotenv").config();
+require("express-async-errors");
 //数据库链接
 require("./dao/db");
 //引入路由
@@ -45,6 +46,10 @@ app.use(function (req, res, next) {
 app.use(function (err, req, res, next) {
   if (err.name === "UnauthorizedError") {
     res.send(new ForbiddenError("未登录或登录已过期").toResponseJSON());
+  } else if (err instanceof ServiceError) {
+    res.send(err.toResponseJSON());
+  } else {
+    res.send(new UnknownError().toResponseJSON());
   }
 });
 

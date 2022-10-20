@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 const { loginService } = require("../service/adminService");
 const { formatResponse, analysisToken } = require("../utils/tool");
+const { updateAdminService } = require("../service/adminService");
 
 //登录
 router.post("/login", async function (req, res, next) {
@@ -26,6 +27,11 @@ router.get("/whoami", async function (req, res, next) {
       id: result.id,
     })
   );
+});
+
+//修改信息
+router.put("/", async function (req, res, next) {
+  res.send(await updateAdminService(req.body));
 });
 
 module.exports = router;
