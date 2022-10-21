@@ -20,6 +20,7 @@ var adminRouter = require("./routes/admin");
 var captchaRouter = require("./routes/captcha");
 var bannerRouter = require("./routes/banner");
 var uploadRouter = require("./routes/upload");
+var blogTypeRouter = require("./routes/blogType");
 
 app.use(
   session({
@@ -46,6 +47,7 @@ app.use(
       { url: "/api/admin/login", methods: ["POST"] },
       { url: "/res/captcha", methods: ["GET"] },
       { url: "/api/banner", methods: ["GET"] },
+      { url: "/api/blogtype", methods: ["GET"] },
     ],
   })
 );
@@ -55,6 +57,7 @@ app.use("/api/admin", adminRouter);
 app.use("/res/captcha", captchaRouter);
 app.use("/api/banner", bannerRouter);
 app.use("/api/upload", uploadRouter);
+app.use("/api/blogtype", blogTypeRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

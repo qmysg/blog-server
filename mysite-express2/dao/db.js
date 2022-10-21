@@ -2,7 +2,9 @@
 const sequelize = require("./dbConnect");
 const adminModel = require("./model/adminModel");
 const bannerModel = require("./model/bannerModel");
+const blogTypeModel = require("./model/blogTypeModel");
 const md5 = require("md5");
+
 (async () => {
   //将数据模型和表进行同步
   await sequelize.sync({ alter: true });
