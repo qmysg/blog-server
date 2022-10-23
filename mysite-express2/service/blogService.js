@@ -8,7 +8,11 @@ const {
   deleteBlogDao,
 } = require("../dao/blogDao");
 const { addBlogtoType, findBlogTypeDao } = require("../dao/blogTypeDao");
-const { formatResponse, handleDataPattern } = require("../utils/tool");
+const {
+  formatResponse,
+  handleDataPattern,
+  handleTOC,
+} = require("../utils/tool");
 const { ValidationError } = require("../utils/error");
 
 //自定义验证规则
@@ -23,8 +27,9 @@ validate.validators.categoryIdIsExist = async function (value) {
 //添加文章
 module.exports.addBlogService = async function (newBlogInfo) {
   //处理toc
-  newBlogInfo.toc = JSON.stringify('["a":1,"b":2]');
-
+  newBlogInfo = handleTOC(newBlogInfo);
+  newBlogInfo.toc = JSON.stringify(newBlogInfo.toc);
+  console.log(newBlogInfo, "newBlogInfo>>>");
   //新文章的评论量及浏览量应为0
   newBlogInfo.scanNumber = 0;
   newBlogInfo.commentNumber = 0;
@@ -129,7 +134,8 @@ module.exports.findOneBlogService = async function (id, auth) {
 module.exports.updateBlogService = async function (id, blogInfo) {
   if (blogInfo.htmlContent) {
     //修改正文，那么toc也应该改变
-    newBlogInfo.toc = JSON.stringify('["a":1,"b":2]');
+    newBlogInfo = handleTOC(newBlogInfo);
+    newBlogInfo.toc = JSON.stringify(newBlogInfo.toc);
   }
   const { dataValues } = await updateBlogDao(id, blogInfo);
   return formatResponse(0, "", dataValues);
