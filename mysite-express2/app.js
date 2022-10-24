@@ -22,6 +22,7 @@ var bannerRouter = require("./routes/banner");
 var uploadRouter = require("./routes/upload");
 var blogTypeRouter = require("./routes/blogType");
 var blogRouter = require("./routes/blog");
+var demoRouter = require("./routes/demo");
 
 app.use(
   session({
@@ -51,6 +52,7 @@ app.use(
       { url: "/api/blogtype", methods: ["GET"] },
       { url: "/api/blog", methods: ["GET"] },
       { url: /\/api\/blog\/\d/, methods: ["GET"] },
+      { url: "/api/project", methods: ["GET"] },
     ],
   })
 );
@@ -62,6 +64,7 @@ app.use("/api/banner", bannerRouter);
 app.use("/api/upload", uploadRouter);
 app.use("/api/blogtype", blogTypeRouter);
 app.use("/api/blog", blogRouter);
+app.use("/api/project", demoRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
