@@ -5,10 +5,12 @@ const bannerModel = require("./model/bannerModel");
 const blogTypeModel = require("./model/blogTypeModel");
 const blogModel = require("./model/blogModel");
 const demoModel = require("./model/demoModel");
+const messageModel = require("./model/messageModel");
 const md5 = require("md5");
 
 (async () => {
   //关联表
+  //关联博客种类与博客
   blogTypeModel.hasMany(blogModel, {
     foreignKey: "categoryId",
     targetKey: "id",
@@ -17,6 +19,14 @@ const md5 = require("md5");
     foreignKey: "categoryId",
     targetKey: "id",
     as: "category",
+  });
+
+  //关联评论与博客
+  blogModel.hasMany(messageModel, { foreignKey: "blogId", targetKey: "id" });
+  messageModel.belongsTo(blogModel, {
+    foreignKey: "blogId",
+    targetKey: "id",
+    as: "blog",
   });
 
   //将数据模型和表进行同步

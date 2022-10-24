@@ -2,18 +2,22 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../dbConnect");
 
 module.exports = sequelize.define(
-  "blogType",
+  "message",
   {
-    name: {
+    nickname: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    order: {
-      type: DataTypes.INTEGER,
+    content: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
-    articleCount: {
-      type: DataTypes.INTEGER,
+    createDate: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    avatar: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
   },

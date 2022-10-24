@@ -23,6 +23,7 @@ var uploadRouter = require("./routes/upload");
 var blogTypeRouter = require("./routes/blogType");
 var blogRouter = require("./routes/blog");
 var demoRouter = require("./routes/demo");
+var messageRouter = require("./routes/message");
 
 app.use(
   session({
@@ -53,6 +54,8 @@ app.use(
       { url: "/api/blog", methods: ["GET"] },
       { url: /\/api\/blog\/\d/, methods: ["GET"] },
       { url: "/api/project", methods: ["GET"] },
+      { url: "/api/comment", methods: ["GET", "POST"] },
+      { url: "/api/message", methods: ["GET", "POST"] },
     ],
   })
 );
@@ -65,6 +68,8 @@ app.use("/api/upload", uploadRouter);
 app.use("/api/blogtype", blogTypeRouter);
 app.use("/api/blog", blogRouter);
 app.use("/api/project", demoRouter);
+app.use("/api/comment", messageRouter);
+app.use("/api/message", messageRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -73,6 +78,8 @@ app.use(function (req, res, next) {
 
 //错误处理
 app.use(function (err, req, res, next) {
+  console.log("err.name>>>", err.name);
+  console.log("err.message>>>", err.message);
   if (err.name === "UnauthorizedError") {
     res.send(new ForbiddenError("未登录或登录已过期").toResponseJSON());
   } else if (err instanceof ServiceError) {

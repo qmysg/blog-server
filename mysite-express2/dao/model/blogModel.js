@@ -1,7 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../dbConnect");
 
-//管理员数据模型
 module.exports = sequelize.define(
   "blog",
   {
