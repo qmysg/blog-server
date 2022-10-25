@@ -5,6 +5,7 @@ const {
   updateBlogTypeDao,
   deleteBlogTypeDao,
 } = require("../dao/blogTypeDao");
+const { getBlogCount } = require("../dao/blogDao");
 const { formatResponse, handleDataPattern } = require("../utils/tool");
 const validate = require("validate.js");
 const { ValidationError } = require("../utils/error");
@@ -55,7 +56,8 @@ module.exports.updateBlogTypeService = async function (blogTypeInfo, id) {
 
 //删除一个分类
 module.exports.deleteBlogTypeService = async function (id) {
+  //获取受影响的文章数量
+  const count = await getBlogCount(id);
   await deleteBlogTypeDao(id);
-  //未完工,需要文章数量
-  return formatResponse(0, "", true);
+  return formatResponse(0, "", count);
 };

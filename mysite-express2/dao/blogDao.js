@@ -54,6 +54,7 @@ module.exports.findOneBlogDao = async function (id) {
 
 //修改一篇文章
 module.exports.updateBlogDao = async function (id, blogInfo) {
+  console.log(blogInfo, "blogInfo>>>");
   await blogModel.update(blogInfo, {
     where: {
       id,
@@ -75,6 +76,15 @@ module.exports.deleteBlogDao = async function (id) {
   return await blogModel.destroy({
     where: {
       id,
+    },
+  });
+};
+
+//查询一种分类下有几篇文章
+module.exports.getBlogCount = async function (categoryId) {
+  return await blogModel.count({
+    where: {
+      categoryId,
     },
   });
 };

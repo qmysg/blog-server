@@ -7,6 +7,7 @@ const {
   updateBlogDao,
   deleteBlogDao,
 } = require("../dao/blogDao");
+const { deleteComment } = require("../dao/messageDao");
 const { addBlogtoType, findBlogTypeDao } = require("../dao/blogTypeDao");
 const {
   formatResponse,
@@ -131,13 +132,33 @@ module.exports.findOneBlogService = async function (id, auth) {
 };
 
 //修改一篇文章
-module.exports.updateBlogService = async function (id, blogInfo) {
-  if (blogInfo.htmlContent) {
+module.exports.updateBlogService = async function (id, newBlogInfo) {
+  if (newBlogInfo.htmlContent) {
     //修改正文，那么toc也应该改变
     newBlogInfo = handleTOC(newBlogInfo);
     newBlogInfo.toc = JSON.stringify(newBlogInfo.toc);
   }
-  const { dataValues } = await updateBlogDao(id, blogInfo);
+
+  //如果修改了文章分类，那么原先的文章分类数量及新的文章分类数量应该变化
+  const { dataValues: oldBlogInfo } = await findOneBlogDao(id);
+  if (oldBlogInfo.categoryId == null) {
+    //文章未分类时
+    //新分类数量加一
+    const newBlogType = await findBlogTypeDao(newBlogInfo.categoryId);
+    newBlogType.articleCount++;
+    await newBlogType.save();
+  } else if (newBlogInfo.categoryId !== oldBlogInfo.categoryId) {
+    //旧分类数量减一
+    const oldBlogType = await findBlogTypeDao(oldBlogInfo.categoryId);
+    oldBlogType.articleCount--;
+    await oldBlogType.save();
+
+    //新分类数量加一
+    const newBlogType = await findBlogTypeDao(newBlogInfo.categoryId);
+    newBlogType.articleCount++;
+    await newBlogType.save();
+  }
+  const { dataValues } = await updateBlogDao(id, newBlogInfo);
   return formatResponse(0, "", dataValues);
 };
 
@@ -150,7 +171,8 @@ module.exports.deleteBlogService = async function (id) {
   categoryInfo.articleCount--;
   await categoryInfo.save();
 
-  //文章下的评论一同被删除,未完工
+  //文章下的评论一同被删除
+  await deleteComment(id);
 
   await deleteBlogDao(id);
   return formatResponse(0, "", true);

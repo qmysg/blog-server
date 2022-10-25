@@ -60,3 +60,12 @@ module.exports.deleteMessageDao = async function (id) {
     },
   });
 };
+
+//删除文章对应的所有评论
+module.exports.deleteComment = async function (blogId) {
+  await messageModel.destroy({
+    where: {
+      blogId,
+    },
+  });
+};
