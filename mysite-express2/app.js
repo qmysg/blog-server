@@ -24,6 +24,8 @@ var blogTypeRouter = require("./routes/blogType");
 var blogRouter = require("./routes/blog");
 var demoRouter = require("./routes/demo");
 var messageRouter = require("./routes/message");
+var settingRouter = require("./routes/setting");
+var aboutRouter = require("./routes/about");
 
 app.use(
   session({
@@ -56,6 +58,8 @@ app.use(
       { url: "/api/project", methods: ["GET"] },
       { url: "/api/comment", methods: ["GET", "POST"] },
       { url: "/api/message", methods: ["GET", "POST"] },
+      { url: "/api/setting", methods: ["GET"] },
+      { url: "/api/about", methods: ["GET"] },
     ],
   })
 );
@@ -70,6 +74,8 @@ app.use("/api/blog", blogRouter);
 app.use("/api/project", demoRouter);
 app.use("/api/comment", messageRouter);
 app.use("/api/message", messageRouter);
+app.use("/api/setting", settingRouter);
+app.use("/api/about", aboutRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
